@@ -3,6 +3,7 @@ package stackdriver
 import (
 	"encoding/json"
 	"fmt"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -129,13 +130,20 @@ func NewFormatter(options ...Option) *Formatter {
 	fmtr := Formatter{
 		StackSkip: []string{
 			"github.com/sirupsen/logrus",
-			"github.com/icco/logrus-stackdriver-formatter",
+			thisPackage(),
 		},
 	}
 	for _, option := range options {
 		option(&fmtr)
 	}
 	return &fmtr
+}
+
+func thisPackage() string {
+	pc, _, _, _ := runtime.Caller(0)
+	name := runtime.FuncForPC(pc).Name()
+
+	return name[:strings.LastIndex(name, ".")]
 }
 
 func (f *Formatter) errorOrigin() (stack.Call, error) {
