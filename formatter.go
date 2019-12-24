@@ -124,6 +124,7 @@ func WithStackSkip(v string) Option {
 	}
 }
 
+// WithNoTimestamp disables including timestamps in log messages, useful for testing.
 func WithNoTimestamp() Option {
 	return func(f *Formatter) {
 		f.ExcludeTimestamp = true
