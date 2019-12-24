@@ -12,8 +12,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var skipTimestamp bool
-
 type severity string
 
 const (
@@ -92,6 +90,7 @@ type Formatter struct {
 	Version   string
 	ProjectID string
 	StackSkip []string
+	ExcludeTimestamp bool
 }
 
 // Option lets you configure the Formatter.
@@ -122,6 +121,12 @@ func WithProjectID(i string) Option {
 func WithStackSkip(v string) Option {
 	return func(f *Formatter) {
 		f.StackSkip = append(f.StackSkip, v)
+	}
+}
+
+func WithNoTimestamp() Option {
+	return func(f *Formatter) {
+		f.ExcludeTimestamp = true
 	}
 }
 
@@ -163,6 +168,7 @@ func (f *Formatter) errorOrigin() (stack.Call, error) {
 		if _, err := c.MarshalText(); err != nil {
 			return stack.Call{}, nil
 		}
+
 		pkg := fmt.Sprintf("%+k", c)
 		// Remove vendoring from package path.
 		parts := strings.SplitN(pkg, "/vendor/", 2)
@@ -216,7 +222,7 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 		ee.LogName = "projects/" + f.ProjectID + "/logs/" + val.(string)
 	}
 
-	if !skipTimestamp {
+	if !f.ExcludeTimestamp {
 		ee.Timestamp = time.Now().UTC().Format(time.RFC3339Nano)
 	}
 

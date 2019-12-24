@@ -1,4 +1,4 @@
-package stackdriver
+package stackdriver_test
 
 import (
 	"bytes"
@@ -6,22 +6,22 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestFormatter(t *testing.T) {
-	skipTimestamp = true
-
 	for _, tt := range formatterTests {
 		t.Run(tt.name, func(t *testing.T) {
 			var got bytes.Buffer
 
 			logger := logrus.New()
 			logger.Out = &got
-			logger.Formatter = NewFormatter(
-				WithService("test"),
-				WithVersion("0.1"),
+			logger.Formatter = stackdriver.NewFormatter(
+				stackdriver.WithService("test"),
+				stackdriver.WithVersion("0.1"),
+				stackdriver.WithNoTimestamp(),
 			)
 
 			tt.run(logger)
@@ -90,15 +90,15 @@ var formatterTests = []struct {
 					"foo": "bar",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "testing/testing.go",
-					"line":     827.0,
-					"function": "tRunner",
+					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"line":     79.0,
+					"function": "glob..func3",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "testing/testing.go",
-				"line":     827.0,
-				"function": "tRunner",
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"line":     79.0,
+				"function": "glob..func3",
 			},
 		},
 	},
@@ -122,15 +122,15 @@ var formatterTests = []struct {
 					"foo": "bar",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "testing/testing.go",
-					"line":     827.0,
-					"function": "tRunner",
+					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"line":     111.0,
+					"function": "glob..func4",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "testing/testing.go",
-				"line":     827.0,
-				"function": "tRunner",
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"line":     111.0,
+				"function": "glob..func4",
 			},
 		},
 	},
@@ -161,15 +161,15 @@ var formatterTests = []struct {
 					},
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "testing/testing.go",
-					"line":     827.0,
-					"function": "tRunner",
+					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"line":     147.0,
+					"function": "glob..func5",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "testing/testing.go",
-				"line":     827.0,
-				"function": "tRunner",
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"line":     147.0,
+				"function": "glob..func5",
 			},
 		},
 	},

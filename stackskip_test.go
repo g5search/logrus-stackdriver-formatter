@@ -1,11 +1,12 @@
-package stackdriver
+package stackdriver_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"testing"
 
-	"github.com/TV4/logrus-stackdriver-formatter/test"
+	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
+	"github.com/charleskorn/logrus-stackdriver-formatter/test"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,10 +16,11 @@ func TestStackSkip(t *testing.T) {
 
 	logger := logrus.New()
 	logger.Out = &out
-	logger.Formatter = NewFormatter(
-		WithService("test"),
-		WithVersion("0.1"),
-		WithStackSkip("github.com/TV4/logrus-stackdriver-formatter/test"),
+	logger.Formatter = stackdriver.NewFormatter(
+		stackdriver.WithService("test"),
+		stackdriver.WithVersion("0.1"),
+		stackdriver.WithStackSkip("github.com/charleskorn/logrus-stackdriver-formatter/test"),
+		stackdriver.WithNoTimestamp(),
 	)
 
 	mylog := test.LogWrapper{
@@ -36,21 +38,21 @@ func TestStackSkip(t *testing.T) {
 		},
 		"context": map[string]interface{}{
 			"reportLocation": map[string]interface{}{
-				"file":     "testing/testing.go",
-				"line":     827.0,
-				"function": "tRunner",
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/stackskip_test.go",
+				"line":     30.0,
+				"function": "TestStackSkip",
 			},
 		},
 		"sourceLocation": map[string]interface{}{
-			"file":     "testing/testing.go",
-			"line":     827.0,
-			"function": "tRunner",
+			"file":     "github.com/charleskorn/logrus-stackdriver-formatter/stackskip_test.go",
+			"line":     30.0,
+			"function": "TestStackSkip",
 		},
 	}
 
-	got, err := json.Marshal(want)
+	wantedBytes, err := json.Marshal(want)
 	if err != nil {
 		t.Error(err)
 	}
-	assert.JSONEq(t, out.String(), string(got))
+	assert.JSONEq(t, string(wantedBytes), out.String())
 }
