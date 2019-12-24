@@ -15,21 +15,21 @@ func TestFormatter(t *testing.T) {
 
 	for _, tt := range formatterTests {
 		t.Run(tt.name, func(t *testing.T) {
-			var out bytes.Buffer
+			var got bytes.Buffer
 
 			logger := logrus.New()
-			logger.Out = &out
+			logger.Out = &got
 			logger.Formatter = NewFormatter(
 				WithService("test"),
 				WithVersion("0.1"),
 			)
 
 			tt.run(logger)
-			got, err := json.Marshal(tt.out)
+			out, err := json.Marshal(tt.out)
 			if err != nil {
 				t.Error(err)
 			}
-			assert.JSONEq(t, out.String(), string(got))
+			assert.JSONEq(t, string(out), got.String())
 		})
 	}
 }
