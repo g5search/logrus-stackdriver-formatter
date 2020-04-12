@@ -51,6 +51,20 @@ var formatterTests = []struct {
 				"data": map[string]interface{}{
 					"foo": "bar",
 				},
+				"reportLocation": map[string]interface{}{
+					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"line":     45,
+					"function": "glob..func1",
+				},
+			},
+			"serviceContext": map[string]interface{}{
+				"service": "test",
+				"version": "0.1",
+			},
+			"sourceLocation": map[string]interface{}{
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"line":     45,
+				"function": "glob..func1",
 			},
 		},
 	},
@@ -63,13 +77,28 @@ var formatterTests = []struct {
 				Info("my log entry")
 		},
 		out: map[string]interface{}{
+			"@type":    "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
 			"severity": "INFO",
-			"message":  "my log entry",
+			"message":  "my log entry: test error",
 			"context": map[string]interface{}{
 				"data": map[string]interface{}{
 					"foo":   "bar",
 					"error": "test error",
 				},
+				"reportLocation": map[string]interface{}{
+					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"line":     77,
+					"function": "glob..func2",
+				},
+			},
+			"serviceContext": map[string]interface{}{
+				"service": "test",
+				"version": "0.1",
+			},
+			"sourceLocation": map[string]interface{}{
+				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"line":     77,
+				"function": "glob..func2",
 			},
 		},
 	},
@@ -91,13 +120,13 @@ var formatterTests = []struct {
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     79.0,
+					"line":     108,
 					"function": "glob..func3",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     79.0,
+				"line":     108,
 				"function": "glob..func3",
 			},
 		},
@@ -111,6 +140,7 @@ var formatterTests = []struct {
 				Error("my log entry")
 		},
 		out: map[string]interface{}{
+			"@type":    "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
 			"severity": "ERROR",
 			"message":  "my log entry: test error",
 			"serviceContext": map[string]interface{}{
@@ -119,17 +149,18 @@ var formatterTests = []struct {
 			},
 			"context": map[string]interface{}{
 				"data": map[string]interface{}{
-					"foo": "bar",
+					"foo":   "bar",
+					"error": "test error",
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     111.0,
+					"line":     140,
 					"function": "glob..func4",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     111.0,
+				"line":     140,
 				"function": "glob..func4",
 			},
 		},
@@ -162,13 +193,13 @@ var formatterTests = []struct {
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     147.0,
+					"line":     178,
 					"function": "glob..func5",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     147.0,
+				"line":     178,
 				"function": "glob..func5",
 			},
 		},

@@ -73,6 +73,7 @@ type HTTPRequest struct {
 
 // Entry stores a log entry.
 type Entry struct {
+	Type 		   string          `json:"@type,omitempty"`
 	LogName        string          `json:"logName,omitempty"`
 	Timestamp      string          `json:"timestamp,omitempty"`
 	Severity       severity        `json:"severity,omitempty"`
@@ -227,47 +228,44 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 		ee.Timestamp = time.Now().UTC().Format(time.RFC3339Nano)
 	}
 
-	switch severity {
-	case severityError, severityCritical, severityAlert:
-		ee.ServiceContext = &ServiceContext{
-			Service: f.Service,
-			Version: f.Version,
+	ee.ServiceContext = &ServiceContext{
+		Service: f.Service,
+		Version: f.Version,
+	}
+
+	// When using WithError(), the error is sent separately, but Error
+	// Reporting expects it to be a part of the message so we append it
+	// instead.
+	if err, ok := ee.Context.Data["error"]; ok {
+		ee.Message = fmt.Sprintf("%s: %s", e.Message, err)
+		ee.Type = "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent"
+	} else {
+		ee.Message = e.Message
+	}
+
+	// As a convenience, when using supplying the httpRequest field, it
+	// gets special care.
+	if reqData, ok := ee.Context.Data["httpRequest"]; ok {
+		if req, ok := reqData.(*HTTPRequest); ok {
+			ee.Context.HTTPRequest = req
+			delete(ee.Context.Data, "httpRequest")
+		}
+	}
+
+	// Extract report location from call stack.
+	if c, err := f.errorOrigin(); err == nil {
+		lineNumber, _ := strconv.ParseInt(fmt.Sprintf("%d", c), 10, 64)
+
+		ee.Context.ReportLocation = &ReportLocation{
+			FilePath:     fmt.Sprintf("%+s", c),
+			LineNumber:   int(lineNumber),
+			FunctionName: fmt.Sprintf("%n", c),
 		}
 
-		// When using WithError(), the error is sent separately, but Error
-		// Reporting expects it to be a part of the message so we append it
-		// instead.
-		if err, ok := ee.Context.Data["error"]; ok {
-			ee.Message = fmt.Sprintf("%s: %s", e.Message, err)
-			delete(ee.Context.Data, "error")
-		} else {
-			ee.Message = e.Message
-		}
-
-		// As a convenience, when using supplying the httpRequest field, it
-		// gets special care.
-		if reqData, ok := ee.Context.Data["httpRequest"]; ok {
-			if req, ok := reqData.(*HTTPRequest); ok {
-				ee.Context.HTTPRequest = req
-				delete(ee.Context.Data, "httpRequest")
-			}
-		}
-
-		// Extract report location from call stack.
-		if c, err := f.errorOrigin(); err == nil {
-			lineNumber, _ := strconv.ParseInt(fmt.Sprintf("%d", c), 10, 64)
-
-			ee.Context.ReportLocation = &ReportLocation{
-				FilePath:     fmt.Sprintf("%+s", c),
-				LineNumber:   int(lineNumber),
-				FunctionName: fmt.Sprintf("%n", c),
-			}
-
-			ee.SourceLocation = &ReportLocation{
-				FilePath:     fmt.Sprintf("%+s", c),
-				LineNumber:   int(lineNumber),
-				FunctionName: fmt.Sprintf("%n", c),
-			}
+		ee.SourceLocation = &ReportLocation{
+			FilePath:     fmt.Sprintf("%+s", c),
+			LineNumber:   int(lineNumber),
+			FunctionName: fmt.Sprintf("%n", c),
 		}
 	}
 
