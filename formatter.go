@@ -73,7 +73,6 @@ type HTTPRequest struct {
 
 // Entry stores a log entry.
 type Entry struct {
-	Type 		   string          `json:"@type,omitempty"`
 	LogName        string          `json:"logName,omitempty"`
 	Timestamp      string          `json:"timestamp,omitempty"`
 	Severity       severity        `json:"severity,omitempty"`
@@ -238,7 +237,6 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 	// instead.
 	if err, ok := ee.Context.Data["error"]; ok {
 		ee.Message = fmt.Sprintf("%s: %s", e.Message, err)
-		ee.Type = "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent"
 	} else {
 		ee.Message = e.Message
 	}

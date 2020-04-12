@@ -77,7 +77,6 @@ var formatterTests = []struct {
 				Info("my log entry")
 		},
 		out: map[string]interface{}{
-			"@type":    "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
 			"severity": "INFO",
 			"message":  "my log entry: test error",
 			"context": map[string]interface{}{
@@ -120,13 +119,13 @@ var formatterTests = []struct {
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     108,
+					"line":     107,
 					"function": "glob..func3",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     108,
+				"line":     107,
 				"function": "glob..func3",
 			},
 		},
@@ -140,7 +139,6 @@ var formatterTests = []struct {
 				Error("my log entry")
 		},
 		out: map[string]interface{}{
-			"@type":    "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
 			"severity": "ERROR",
 			"message":  "my log entry: test error",
 			"serviceContext": map[string]interface{}{
@@ -154,13 +152,13 @@ var formatterTests = []struct {
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     140,
+					"line":     139,
 					"function": "glob..func4",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     140,
+				"line":     139,
 				"function": "glob..func4",
 			},
 		},
@@ -193,13 +191,13 @@ var formatterTests = []struct {
 				},
 				"reportLocation": map[string]interface{}{
 					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-					"line":     178,
+					"line":     176,
 					"function": "glob..func5",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
 				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
-				"line":     178,
+				"line":     176,
 				"function": "glob..func5",
 			},
 		},
