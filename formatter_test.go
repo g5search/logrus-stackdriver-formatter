@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/charleskorn/logrus-stackdriver-formatter"
+	stackdriver "github.com/g5search/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ var formatterTests = []struct {
 					"foo": "bar",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 					"line":     45,
 					"function": "glob..func1",
 				},
@@ -62,7 +62,7 @@ var formatterTests = []struct {
 				"version": "0.1",
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 				"line":     45,
 				"function": "glob..func1",
 			},
@@ -85,7 +85,7 @@ var formatterTests = []struct {
 					"error": "test error",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 					"line":     77,
 					"function": "glob..func2",
 				},
@@ -95,7 +95,7 @@ var formatterTests = []struct {
 				"version": "0.1",
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 				"line":     77,
 				"function": "glob..func2",
 			},
@@ -118,13 +118,13 @@ var formatterTests = []struct {
 					"foo": "bar",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 					"line":     107,
 					"function": "glob..func3",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 				"line":     107,
 				"function": "glob..func3",
 			},
@@ -151,13 +151,13 @@ var formatterTests = []struct {
 					"error": "test error",
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 					"line":     139,
 					"function": "glob..func4",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 				"line":     139,
 				"function": "glob..func4",
 			},
@@ -190,13 +190,13 @@ var formatterTests = []struct {
 					},
 				},
 				"reportLocation": map[string]interface{}{
-					"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+					"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 					"line":     176,
 					"function": "glob..func5",
 				},
 			},
 			"sourceLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/formatter_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/formatter_test.go",
 				"line":     176,
 				"function": "glob..func5",
 			},

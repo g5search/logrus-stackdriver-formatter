@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
-	"github.com/charleskorn/logrus-stackdriver-formatter/test"
+	stackdriver "github.com/g5search/logrus-stackdriver-formatter"
+	"github.com/g5search/logrus-stackdriver-formatter/test"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +19,7 @@ func TestStackSkip(t *testing.T) {
 	logger.Formatter = stackdriver.NewFormatter(
 		stackdriver.WithService("test"),
 		stackdriver.WithVersion("0.1"),
-		stackdriver.WithStackSkip("github.com/charleskorn/logrus-stackdriver-formatter/test"),
+		stackdriver.WithStackSkip("github.com/g5search/logrus-stackdriver-formatter/test"),
 		stackdriver.WithNoTimestamp(),
 	)
 
@@ -38,13 +38,13 @@ func TestStackSkip(t *testing.T) {
 		},
 		"context": map[string]interface{}{
 			"reportLocation": map[string]interface{}{
-				"file":     "github.com/charleskorn/logrus-stackdriver-formatter/stackskip_test.go",
+				"file":     "github.com/g5search/logrus-stackdriver-formatter/stackskip_test.go",
 				"line":     30.0,
 				"function": "TestStackSkip",
 			},
 		},
 		"sourceLocation": map[string]interface{}{
-			"file":     "github.com/charleskorn/logrus-stackdriver-formatter/stackskip_test.go",
+			"file":     "github.com/g5search/logrus-stackdriver-formatter/stackskip_test.go",
 			"line":     30.0,
 			"function": "TestStackSkip",
 		},
