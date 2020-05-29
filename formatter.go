@@ -78,7 +78,7 @@ type Entry struct {
 	Severity       severity        `json:"severity,omitempty"`
 	HTTPRequest    *HTTPRequest    `json:"httpRequest,omitempty"`
 	Trace          string          `json:"logging.googleapis.com/trace,omitempty"`
-	SpanID         string          `json:"logging.googleapis.com/spanId,omitempty"`
+	SpanID         [8]byte         `json:"logging.googleapis.com/spanId,omitempty"`
 	TraceSampled   bool            `json:"logging.googleapis.com/trace_sampled,omitempty"`
 	ServiceContext *ServiceContext `json:"serviceContext,omitempty"`
 	Message        string          `json:"message,omitempty"`
@@ -199,8 +199,9 @@ func replaceErrors(source logrus.Fields) logrus.Fields {
 }
 
 type TraceField struct {
-	TraceID, SpanID string
-	TraceSampled    bool
+	Trace     string
+	SpanID    [8]byte
+	IsSampled bool
 }
 
 // ToEntry formats a logrus entry to a stackdriver entry.
@@ -218,9 +219,9 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 	if val, ok := e.Data["trace"]; ok {
 		t, ok := val.(TraceField)
 		if ok {
-			ee.Trace = t.TraceID
+			ee.Trace = t.Trace
 			ee.SpanID = t.SpanID
-			ee.TraceSampled = t.TraceSampled
+			ee.TraceSampled = t.IsSampled
 			delete(ee.Context.Data, "trace")
 		}
 	}
