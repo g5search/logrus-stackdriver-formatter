@@ -1,6 +1,7 @@
 package stackdriver
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"runtime"
@@ -220,7 +221,7 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 		t, ok := val.(TraceField)
 		if ok {
 			ee.Trace = t.Trace
-			ee.SpanID = fmt.Sprintf("%v", t.SpanID)
+			ee.SpanID = hex.EncodeToString(t.SpanID[:])
 			ee.TraceSampled = t.IsSampled
 			delete(ee.Context.Data, "trace")
 		}
