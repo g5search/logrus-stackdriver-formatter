@@ -78,7 +78,7 @@ type Entry struct {
 	Severity       severity        `json:"severity,omitempty"`
 	HTTPRequest    *HTTPRequest    `json:"httpRequest,omitempty"`
 	Trace          string          `json:"logging.googleapis.com/trace,omitempty"`
-	SpanID         [8]byte         `json:"logging.googleapis.com/spanId,omitempty"`
+	SpanID         string          `json:"logging.googleapis.com/spanId,omitempty"`
 	TraceSampled   bool            `json:"logging.googleapis.com/trace_sampled,omitempty"`
 	ServiceContext *ServiceContext `json:"serviceContext,omitempty"`
 	Message        string          `json:"message,omitempty"`
@@ -220,7 +220,7 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 		t, ok := val.(TraceField)
 		if ok {
 			ee.Trace = t.Trace
-			ee.SpanID = t.SpanID
+			ee.SpanID = fmt.Sprintf("%v", t.SpanID)
 			ee.TraceSampled = t.IsSampled
 			delete(ee.Context.Data, "trace")
 		}
@@ -241,43 +241,46 @@ func (f *Formatter) ToEntry(e *logrus.Entry) (Entry, error) {
 		ee.Timestamp = time.Now().UTC().Format(time.RFC3339Nano)
 	}
 
-	ee.ServiceContext = &ServiceContext{
-		Service: f.Service,
-		Version: f.Version,
-	}
-
-	// When using WithError(), the error is sent separately, but Error
-	// Reporting expects it to be a part of the message so we append it
-	// instead.
-	if err, ok := ee.Context.Data["error"]; ok {
-		ee.Message = fmt.Sprintf("%s: %s", e.Message, err)
-	} else {
-		ee.Message = e.Message
-	}
-
-	// As a convenience, when using supplying the httpRequest field, it
-	// gets special care.
-	if reqData, ok := ee.Context.Data["httpRequest"]; ok {
-		if req, ok := reqData.(*HTTPRequest); ok {
-			ee.Context.HTTPRequest = req
-			delete(ee.Context.Data, "httpRequest")
-		}
-	}
-
-	// Extract report location from call stack.
-	if c, err := f.errorOrigin(); err == nil {
-		lineNumber, _ := strconv.ParseInt(fmt.Sprintf("%d", c), 10, 64)
-
-		ee.Context.ReportLocation = &ReportLocation{
-			FilePath:     fmt.Sprintf("%+s", c),
-			LineNumber:   int(lineNumber),
-			FunctionName: fmt.Sprintf("%n", c),
+	switch severity {
+	case severityError, severityCritical, severityAlert:
+		ee.ServiceContext = &ServiceContext{
+			Service: f.Service,
+			Version: f.Version,
 		}
 
-		ee.SourceLocation = &ReportLocation{
-			FilePath:     fmt.Sprintf("%+s", c),
-			LineNumber:   int(lineNumber),
-			FunctionName: fmt.Sprintf("%n", c),
+		// When using WithError(), the error is sent separately, but Error
+		// Reporting expects it to be a part of the message so we append it
+		// instead.
+		if err, ok := ee.Context.Data["error"]; ok {
+			ee.Message = fmt.Sprintf("%s: %s", e.Message, err)
+		} else {
+			ee.Message = e.Message
+		}
+
+		// As a convenience, when using supplying the httpRequest field, it
+		// gets special care.
+		if reqData, ok := ee.Context.Data["httpRequest"]; ok {
+			if req, ok := reqData.(*HTTPRequest); ok {
+				ee.Context.HTTPRequest = req
+				delete(ee.Context.Data, "httpRequest")
+			}
+		}
+
+		// Extract report location from call stack.
+		if c, err := f.errorOrigin(); err == nil {
+			lineNumber, _ := strconv.ParseInt(fmt.Sprintf("%d", c), 10, 64)
+
+			ee.Context.ReportLocation = &ReportLocation{
+				FilePath:     fmt.Sprintf("%+s", c),
+				LineNumber:   int(lineNumber),
+				FunctionName: fmt.Sprintf("%n", c),
+			}
+
+			ee.SourceLocation = &ReportLocation{
+				FilePath:     fmt.Sprintf("%+s", c),
+				LineNumber:   int(lineNumber),
+				FunctionName: fmt.Sprintf("%n", c),
+			}
 		}
 	}
 
